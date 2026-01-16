@@ -294,14 +294,14 @@ identify_exclusion_blocks <- function(physical_blocks, hospitals_sf, precinct_lo
 #==============================================================================
 
 allocate_crimes_to_blocks <- function(crime_sf, 
-                                       physical_blocks,
-                                       intersection_nodes,
-                                       intersection_to_blocks,
-                                       threshold = INTERSECTION_THRESHOLD) {
+                                      physical_blocks,
+                                      intersection_nodes,
+                                      intersection_to_blocks,
+                                      threshold = INTERSECTION_THRESHOLD) {
   #
   # This function implements the EBC intersection allocation logic:
   # 1. For each crime, find distance to nearest intersection node
-
+  
   # 2. If within threshold: split crime equally across all adjacent blocks
   # 3. If beyond threshold: assign entirely to nearest block
   #
@@ -384,11 +384,11 @@ allocate_crimes_to_blocks <- function(crime_sf,
 #==============================================================================
 
 build_block_crime_matrix <- function(physical_blocks,
-                                      crime_data,
-                                      intersection_nodes,
-                                      intersection_to_blocks,
-                                      exclude_block_ids,
-                                      nypp) {
+                                     crime_data,
+                                     intersection_nodes,
+                                     intersection_to_blocks,
+                                     exclude_block_ids,
+                                     nypp) {
   
   cat("\n" , strrep("=", 60), "\n")
   cat("BUILDING BLOCK-LEVEL CRIME MATRIX\n")
@@ -1016,12 +1016,29 @@ run_targeting_analysis <- function() {
   
   cat("\nAnalysis complete. Plots saved.\n")
   
+  #============================================================================
+  # EXPORT KEY OBJECTS TO GLOBAL ENVIRONMENT FOR DOWNSTREAM SCRIPTS
+  #============================================================================
+  cat("\nExporting objects to global environment for downstream scripts...\n")
+  
+  assign("crime_data", crime_data, envir = .GlobalEnv)
+  assign("physical_blocks", data$physical_blocks, envir = .GlobalEnv)
+  assign("intersection_nodes", data$intersection_nodes, envir = .GlobalEnv)
+  assign("intersection_to_blocks", data$intersection_to_blocks, envir = .GlobalEnv)
+  assign("nypp", data$nypp, envir = .GlobalEnv)
+  
+  # Also export individual sf objects for convenience
+  assign("shootings_sf", crime_data$shootings_sf, envir = .GlobalEnv)
+  assign("shots_fired_sf", crime_data$shots_fired_sf, envir = .GlobalEnv)
+  assign("violent_crime_sf", crime_data$violent_crime_sf, envir = .GlobalEnv)
+  
+  cat("  Exported: crime_data, physical_blocks, intersection_nodes,\n")
+  cat("            intersection_to_blocks, nypp, shootings_sf,\n")
+  cat("            shots_fired_sf, violent_crime_sf\n")
+  
   # Return everything
   c(results, list(plots = plots))
 }
-
-# To execute:
-# output <- run_targeting_analysis()
 
 #==============================================================================
 # QUICK DIAGNOSTIC (run before full analysis)
@@ -1060,4 +1077,3 @@ quick_diagnostic <- function() {
 # quick_diagnostic()
 
 output <- run_targeting_analysis()
-
